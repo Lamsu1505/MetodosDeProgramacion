@@ -3,19 +3,30 @@ package voraces;
 import java.util.*;
 
 public class Kruskal {
-    static class Edge implements Comparable<Edge> {
+    public static class Edge implements Comparable<Edge> {
         int u, v; int w;
-        Edge(int u, int v, int w) { this.u = u; this.v = v; this.w = w; }
+        public Edge(int u, int v, int w) { this.u = u; this.v = v; this.w = w; }
         public int compareTo(Edge other) { return Integer.compare(this.w, other.w); }
     }
     static class DSU {
-        int[] p, r;
-        DSU(int n) { p = new int[n]; r = new int[n]; for(int i=0;i<n;i++) p[i]=i; }
-        int find(int x) { return p[x]==x?x:(p[x]=find(p[x])); }
-        boolean union(int a,int b) {
-            a=find(a); b=find(b);
-            if (a==b) return false;
-            if (r[a]<r[b]) p[a]=b; else if (r[b]<r[a]) p[b]=a; else { p[b]=a; r[a]++; }
+        int[] parent, rank;
+        DSU(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+
+        int find(int x) {
+            return parent[x] == x ? x : (parent[x] = find(parent[x]));
+        }
+
+        boolean union(int a, int b) {
+            a = find(a);
+            b = find(b);
+            if (a == b) return false;
+            if (rank[a] < rank[b]) parent[a] = b;
+            else if (rank[b] < rank[a]) parent[b] = a;
+            else { parent[b] = a; rank[a]++; }
             return true;
         }
     }
@@ -28,6 +39,23 @@ public class Kruskal {
             if (dsu.union(e.u, e.v)) {
                 total += e.w; cnt++;
                 if (cnt == n-1) break;
+            }
+        }
+        return total;
+    }
+
+    // Método solicitado en el main
+    public static int kruskalMST(int n, List<Edge> edges) {
+        Collections.sort(edges);
+        DSU dsu = new DSU(n);
+        int total = 0;
+        int count = 0;
+
+        for (Edge e : edges) {
+            if (dsu.union(e.u, e.v)) {
+                total += e.w;
+                count++;
+                if (count == n - 1) break;
             }
         }
         return total;

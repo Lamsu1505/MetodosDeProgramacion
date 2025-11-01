@@ -1,8 +1,22 @@
-package ProgramacionDinamica;
-
-import java.util.*;
+package programacionDinamica;
 
 public class MochilaTabulacion {
+
+    public static int resolverMochila(int[] peso, int[] valor, int capacidad) {
+        int n = peso.length;
+        int[][] dp = new int[n + 1][capacidad + 1];
+
+        for (int i = 1; i <= n; i++) {
+            for (int w = 0; w <= capacidad; w++) {
+                dp[i][w] = dp[i - 1][w];
+                if (peso[i - 1] <= w) {
+                    dp[i][w] = Math.max(dp[i][w], valor[i - 1] + dp[i - 1][w - peso[i - 1]]);
+                }
+            }
+        }
+        return dp[n][capacidad];
+    }
+
     public static int knap(int[] wt, int[] val, int W) {
         int n = wt.length;
         int[][] dp = new int[n+1][W+1];

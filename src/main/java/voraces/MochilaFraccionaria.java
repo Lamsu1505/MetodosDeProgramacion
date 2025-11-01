@@ -3,9 +3,9 @@ package voraces;
 import java.util.*;
 
 public class MochilaFraccionaria {
-    static class Item {
+    public static class Item {
         int w; double v;
-        Item(int w, double v) { this.w = w; this.v = v; }
+        public Item(int w, double v) { this.w = w; this.v = v; }
     }
     static class ItemRatio {
         double ratio; int w; double v;
@@ -31,6 +31,29 @@ public class MochilaFraccionaria {
             }
         }
         return totalValue;
+    }
+
+    // Método solicitado en el main
+    public static double resolverMochila(Item[] items, int capacidad) {
+        // Ordenar por valor/peso de mayor a menor
+        Arrays.sort(items, (a, b) -> Double.compare(b.v / b.w, a.v / a.w));
+
+        double valorTotal = 0.0;
+        int pesoActual = 0;
+
+        for (Item it : items) {
+            if (pesoActual + it.w <= capacidad) {
+                // Tomar el ítem completo
+                valorTotal += it.v;
+                pesoActual += it.w;
+            } else {
+                // Tomar una fracción del ítem
+                int restante = capacidad - pesoActual;
+                valorTotal += it.v * ((double) restante / it.w);
+                break;
+            }
+        }
+        return valorTotal;
     }
 
     public static void main(String[] args) {
