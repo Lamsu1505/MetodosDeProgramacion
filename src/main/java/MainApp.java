@@ -143,8 +143,9 @@ public class MainApp {
         }
         System.out.print("Capacidad máxima: ");
         int W = sc.nextInt();
-        int res = MochilaMemoizacion.resolverMochila(peso, valor, W);
-        System.out.println("Valor máximo posible (Memoización): " + res);
+        MochilaMemoizacion.Resultado res = MochilaMemoizacion.resolverMochila(peso, valor, W);
+        System.out.println(res);
+
     }
 
     // ----- 8 -----
@@ -160,7 +161,8 @@ public class MainApp {
         }
         System.out.print("Capacidad máxima: ");
         int W = sc.nextInt();
-        int res = MochilaTabulacion.resolverMochila(peso, valor, W);
-        System.out.println("Valor máximo posible (Tabulación): " + res);
+        MochilaTabulacion.Resultado res = MochilaTabulacion.resolverMochila(peso, valor, W);
+        System.out.println(res);
+
     }
 }
