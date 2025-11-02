@@ -1,40 +1,34 @@
 package DivideVenceras;
 
-public class MajorityElement{
+public class MajorityElement {
 
+    // Método principal
     public static int findMajorityElement(int[] nums) {
-        return majorityElementRec(nums, 0, nums.length - 1);
-    }
+        int candidato = majorityRec(nums, 0, nums.length - 1);
 
-    private static int majorityElementRec(int[] nums, int left, int right) {
-        // Caso base: solo un elemento
-        if (left == right) {
-            return nums[left];
-        }
-
-        int mid = (left + right) / 2;
-
-        // Divide
-        int leftMajor = majorityElementRec(nums, left, mid);
-        int rightMajor = majorityElementRec(nums, mid + 1, right);
-
-        // Conquista
-        if (leftMajor == rightMajor) {
-            return leftMajor;
-        }
-
-        // Cuenta cuántas veces aparece cada uno
-        int leftCount = countInRange(nums, leftMajor, left, right);
-        int rightCount = countInRange(nums, rightMajor, left, right);
-
-        return leftCount > rightCount ? leftMajor : rightMajor;
-    }
-
-    private static int countInRange(int[] nums, int num, int left, int right) {
+        // Validar que sea realmente mayoritario
         int count = 0;
-        for (int i = left; i <= right; i++) {
-            if (nums[i] == num) count++;
+        for (int n : nums) {
+            if (n == candidato) count++;
         }
-        return count;
+        return count > nums.length / 2 ? candidato : -1;
+    }
+
+    // Método recursivo (Divide y Vencerás)
+    private static int majorityRec(int[] nums, int l, int r) {
+        if (l == r) return nums[l]; // caso base
+
+        int mid = l + (r - l) / 2;
+        int left = majorityRec(nums, l, mid);
+        int right = majorityRec(nums, mid + 1, r);
+
+        if (left == right) return left;
+
+        int leftCount = 0, rightCount = 0;
+        for (int i = l; i <= r; i++) {
+            if (nums[i] == left) leftCount++;
+            if (nums[i] == right) rightCount++;
+        }
+        return leftCount > rightCount ? left : right;
     }
 }
