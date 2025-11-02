@@ -1,4 +1,4 @@
-package DivideVenceras;
+package divideVenceras;
 
 public class MajorityElement {
 
