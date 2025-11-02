@@ -1,34 +1,34 @@
-package divideVenceras;
+package DivideVenceras;
 
 public class MajorityElement {
 
-    // Método principal
-    public static int findMajorityElement(int[] nums) {
-        int candidato = majorityRec(nums, 0, nums.length - 1);
-
-        // Validar que sea realmente mayoritario
-        int count = 0;
-        for (int n : nums) {
-            if (n == candidato) count++;
-        }
-        return count > nums.length / 2 ? candidato : -1;
+    // Encuentra el elemento mayoritario (que aparece más de n/2 veces)
+    public static int findMajorityElement(int[] arr) {
+        return majorityElementRec(arr, 0, arr.length - 1);
     }
 
-    // Método recursivo (Divide y Vencerás)
-    private static int majorityRec(int[] nums, int l, int r) {
-        if (l == r) return nums[l]; // caso base
+    private static int majorityElementRec(int[] arr, int left, int right) {
+        if (left == right)
+            return arr[left];
 
-        int mid = l + (r - l) / 2;
-        int left = majorityRec(nums, l, mid);
-        int right = majorityRec(nums, mid + 1, r);
+        int mid = (left + right) / 2;
+        int leftMajor = majorityElementRec(arr, left, mid);
+        int rightMajor = majorityElementRec(arr, mid + 1, right);
 
-        if (left == right) return left;
+        if (leftMajor == rightMajor)
+            return leftMajor;
 
-        int leftCount = 0, rightCount = 0;
-        for (int i = l; i <= r; i++) {
-            if (nums[i] == left) leftCount++;
-            if (nums[i] == right) rightCount++;
-        }
-        return leftCount > rightCount ? left : right;
+        int leftCount = countInRange(arr, leftMajor, left, right);
+        int rightCount = countInRange(arr, rightMajor, left, right);
+
+        return leftCount > rightCount ? leftMajor : rightMajor;
+    }
+
+    private static int countInRange(int[] arr, int num, int left, int right) {
+        int count = 0;
+        for (int i = left; i <= right; i++)
+            if (arr[i] == num)
+                count++;
+        return count;
     }
 }

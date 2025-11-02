@@ -1,4 +1,4 @@
-package divideVenceras;
+package DivideVenceras;
 
 public class SmallerElementsCount {
 

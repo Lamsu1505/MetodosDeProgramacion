@@ -1,65 +1,85 @@
-package voraces;
-
+package Voraces;
 import java.util.*;
 
 public class MochilaFraccionaria {
+
     public static class Item {
-        int w; double v;
-        public Item(int w, double v) { this.w = w; this.v = v; }
-    }
-    static class ItemRatio {
-        double ratio; int w; double v;
-        ItemRatio(double r, int w, double v) { this.ratio = r; this.w = w; this.v = v; }
-    }
-
-    public static double fractionalKnapsack(Item[] items, int W) {
-        int n = items.length;
-        List<ItemRatio> list = new ArrayList<>();
-        for (Item it : items) list.add(new ItemRatio(it.v / it.w, it.w, it.v));
-        list.sort((a,b) -> Double.compare(b.ratio, a.ratio)); // descendente
-        double totalValue = 0.0;
-        int capacity = W;
-        for (ItemRatio it : list) {
-            if (capacity == 0) break;
-            if (it.w <= capacity) {
-                totalValue += it.v;
-                capacity -= it.w;
-            } else {
-                // tomar fracción
-                totalValue += it.ratio * capacity;
-                capacity = 0;
-            }
+        int peso;
+        double valor;
+        int index;
+        public Item(int peso, double valor) {
+            this.peso = peso;
+            this.valor = valor;
+            this.index = -1;
         }
-        return totalValue;
     }
 
-    // Método solicitado en el main
-    public static double resolverMochila(Item[] items, int capacidad) {
-        // Ordenar por valor/peso de mayor a menor
-        Arrays.sort(items, (a, b) -> Double.compare(b.v / b.w, a.v / a.w));
+    public static class SelectedItem {
+        public int index;
+        public int peso;
+        public double valor;
+        public double fraccion;
+        public double valorObtenido;
 
-        double valorTotal = 0.0;
+        public SelectedItem(int index, int peso, double valor, double fraccion, double valorObtenido) {
+            this.index = index;
+            this.peso = peso;
+            this.valor = valor;
+            this.fraccion = fraccion;
+            this.valorObtenido = valorObtenido;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Ítem %d | Peso: %d | Valor: %.2f | Fracción: %.2f | Valor obtenido: %.2f",
+                    index + 1, peso, valor, fraccion, valorObtenido);
+        }
+    }
+
+    public static class Result {
+        public double valorTotal;
+        public List<SelectedItem> seleccion;
+
+        public Result(double valorTotal, List<SelectedItem> seleccion) {
+            this.valorTotal = valorTotal;
+            this.seleccion = seleccion;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("Valor total obtenido: %.2f\n", valorTotal));
+            sb.append("Ítems seleccionados:\n");
+            for (SelectedItem s : seleccion)
+                sb.append("  ").append(s).append("\n");
+            return sb.toString();
+        }
+    }
+
+    public static Result resolverMochila(Item[] items, int capacidad) {
+        for (int i = 0; i < items.length; i++) items[i].index = i;
+        Arrays.sort(items, (a, b) -> Double.compare(b.valor / b.peso, a.valor / a.peso));
+
+        double valorTotal = 0;
         int pesoActual = 0;
+        List<SelectedItem> seleccion = new ArrayList<>();
 
         for (Item it : items) {
-            if (pesoActual + it.w <= capacidad) {
-                // Tomar el ítem completo
-                valorTotal += it.v;
-                pesoActual += it.w;
+            if (pesoActual >= capacidad) break;
+            if (pesoActual + it.peso <= capacidad) {
+                valorTotal += it.valor;
+                pesoActual += it.peso;
+                seleccion.add(new SelectedItem(it.index, it.peso, it.valor, 1.0, it.valor));
             } else {
-                // Tomar una fracción del ítem
                 int restante = capacidad - pesoActual;
-                valorTotal += it.v * ((double) restante / it.w);
+                double fraccion = ((double) restante) / it.peso;
+                double valorObtenido = it.valor * fraccion;
+                valorTotal += valorObtenido;
+                seleccion.add(new SelectedItem(it.index, it.peso, it.valor, fraccion, valorObtenido));
                 break;
             }
         }
-        return valorTotal;
-    }
 
-    public static void main(String[] args) {
-        Item[] items = { new Item(10,60), new Item(20,100), new Item(30,120) };
-        int W = 50;
-        System.out.println("Valor máximo fraccionario: " + fractionalKnapsack(items, W)); // espera 240.0
+        return new Result(valorTotal, seleccion);
     }
 }
-
